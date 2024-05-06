@@ -28,15 +28,15 @@ _get_repolink () {
     regex='(https?)://github.com/.+/.+'
     if [[ $UPSTREAM_REPO == "pro" ]]
     then
-        rlink=`echo "https://github.com/badmunda011/LEGEND-BOT/tree/master" | base64 -d`
+        rlink=`echo "https://github.com/badmunda011/LEGENDBOT4" | base64 -d`
     elif [[ $UPSTREAM_REPO == "update" ]]
     then
-        rlink=`echo "https://github.com/badmunda011/LEGEND-BOT/tree/master" | base64 -d`
+        rlink=`echo "https://github.com/badmunda011/LEGENDBOT4" | base64 -d`
     elif [[ $UPSTREAM_REPO =~ $regex ]]
     then
         rlink=`echo "${UPSTREAM_REPO}"`
     else
-        rlink=`echo "https://github.com/badmunda011/LEGEND-BOT/tree/master" | base64 -d`
+        rlink=`echo "https://github.com/badmunda011/LEGENDBOT4" | base64 -d`
     fi
     echo "$rlink"
 }
@@ -87,7 +87,7 @@ _start_bot () {
     python3 ../setup/updater.py ../requirements.txt requirements.txt
     chmod -R 755 bin
     echo "    Ⓢⓣⓐⓡⓣⓘⓝⓖ ⓁⓔⓖⓔⓝⓓⓊⓢⓔⓡⒷⓞⓣ   "
-    python3 -m Legendbot3
+    python3
 }
 
 _start_bot
