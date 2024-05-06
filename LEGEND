@@ -1,93 +1,36 @@
 #!/bin/bash
 
-_get_zlink () {
-    local regex
-    regex='(https?)://github.com/.+/.+'
-    if [[ $UPSTREAM_REPO == "pro" ]]
+
+_LEGEND_zip () {
+    if [[ $GIT_REPO ]]
     then
-        echo "https://github.com/badmunda011/LEGEND-BOT" | base64 -d
-    elif [[ $UPSTREAM_REPO == "update" ]]
-    then
-        echo "https://github.com/badmunda011/LEGEND-BOT" | base64 -d
-    elif [[ $UPSTREAM_REPO =~ $regex ]]
-    then
-        if [[ $UPSTREAM_REPO_BRANCH ]]
-        then
-            echo "${UPSTREAM_REPO}/archive/${UPSTREAM_REPO_BRANCH}.zip"
-        else
-            echo "${UPSTREAM_REPO}/archive/master.zip"
-        fi
+        echo "https://github.com/${GIT_REPO}/archive/master.zip"
     else
-        echo "https://github.com/badmunda011/LEGEND-BOT" | base64 -d
+        echo "https://github.com/badmunda011/LEGEND-BOT/archive/master.zip" 
     fi
 }
 
-_get_repolink () {
-    local regex
-    local rlink
-    regex='(https?)://github.com/.+/.+'
-    if [[ $UPSTREAM_REPO == "pro" ]]
-    then
-        rlink=`echo "https://github.com/badmunda011/LEGEND-BOT" | base64 -d`
-    elif [[ $UPSTREAM_REPO == "update" ]]
-    then
-        rlink=`echo "https://github.com/badmunda011/LEGEND-BOT" | base64 -d`
-    elif [[ $UPSTREAM_REPO =~ $regex ]]
-    then
-        rlink=`echo "${UPSTREAM_REPO}"`
+_library () {
+    if [[ $BOT_LIBRARY == "pyrogram" ]]
+    then 
+        python3 -m PyrogramPbx
     else
-        rlink=`echo "https://github.com/badmunda011/LEGEND-BOT" | base64 -d`
+        python3 -m TelethonPbx
     fi
-    echo "$rlink"
 }
 
-
-_run_python_code() {
-    python3${pVer%.*} -c "$1"
-}
-
-_run_legendpackgit() {
-    $(_run_python_code 'from git import Repo
-import sys
-OFFICIAL_UPSTREAM_REPO = "https://github.com/badmunda011/Legendbot3"
-ACTIVE_BRANCH_NAME = "master"
-repo = Repo.init()
-origin = repo.create_remote("temponame", OFFICIAL_UPSTREAM_REPO)
-origin.fetch()
-repo.create_head(ACTIVE_BRANCH_NAME, origin.refs[ACTIVE_BRANCH_NAME])
-repo.heads[ACTIVE_BRANCH_NAME].checkout(True) ')
-}
-
-_run_legendgit() {
-    local repolink=$(_get_repolink)
-    $(_run_python_code 'from git import Repo
-import sys
-OFFICIAL_UPSTREAM_REPO="'$repolink'"
-ACTIVE_BRANCH_NAME = "'$UPSTREAM_REPO_BRANCH'" or "master"
-repo = Repo.init()
-origin = repo.create_remote("temponame", OFFICIAL_UPSTREAM_REPO)
-origin.fetch()
-repo.create_head(ACTIVE_BRANCH_NAME, origin.refs[ACTIVE_BRANCH_NAME])
-repo.heads[ACTIVE_BRANCH_NAME].checkout(True) ')
-}
-
-_start_bot () {
-    local zippath
-    zippath="LEGENDBOT.zip"
-    echo "   ↤↤↤↤↤ ∂σωиℓσα∂ιиg ѕσυя¢є ¢σ∂є ↦↦↦↦↦.."
-    wget -q $(_get_zlink) -O "$zippath"
-    echo "  ↫↫↫↫↫ υиρα¢кιиg ∂αтα ↬↬↬↬↬ ..."
-    LEGENDPATH=$(zipinfo -1 "$zippath" | grep -v "/.");
-    unzip -qq "$zippath"
-    echo "  ¢ℓєαиιиg ..."
-    rm -rf "$zippath"
-    _run_legendpackgit
+_starter () {
+    local LEGENDPATH
+    LEGENDPATH="Plugins.zip"
+    echo "••• DOWNLOADING PBXBOT •••"
+    wget -q $(_Pbx_zip) -O "$LEGENDPATH"
+    LEGENDPATH=$(zipinfo -1 "$LEGENDPATH" | grep -v "/.");
+    unzip -qq "$LEGENDPATH"
+    rm -rf "$LEGENDPATH"
     cd $LEGENDPATH
-    _run_legendgit
-    python3 ../setup/updater.py ../requirements.txt requirements.txt
-    chmod -R 755 bin
-    echo "    Ⓢⓣⓐⓡⓣⓘⓝⓖ ⓁⓔⓖⓔⓝⓓⓊⓢⓔⓡⒷⓞⓣ   "
-    python3 -m Legendbot
+    python3 ../updater.py ../requirements.txt requirements.txt
+    echo "••• STARTING PBXBOT •••"
+    _library
 }
 
-_start_bot
+_starter
