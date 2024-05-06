@@ -15,7 +15,7 @@ _library () {
     then 
         python3 -m PyrogramLEGEND
     else
-        python3 -m TelethonPbxLEGEND
+        python3 -m TelethonLEGEND
     fi
 }
 
